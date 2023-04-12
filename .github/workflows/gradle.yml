@@ -26,6 +26,3 @@ jobs:
       
     - name: Execute Gradle build
       run: gradle build
-      
-    - name: Testing
-      run: gradle tasks --all
