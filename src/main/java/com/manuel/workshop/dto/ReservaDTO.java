@@ -2,9 +2,11 @@ package com.manuel.workshop.dto;
 
 import com.manuel.workshop.model.Cliente;
 import com.manuel.workshop.model.Habitacion;
+import io.swagger.annotations.ApiModel;
 
 import java.time.LocalDate;
 
+@ApiModel(value = "Reserva")
 public class ReservaDTO {
     private LocalDate fechaReserva;
     private Habitacion habitacion;

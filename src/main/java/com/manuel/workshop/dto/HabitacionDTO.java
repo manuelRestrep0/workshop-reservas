@@ -1,5 +1,8 @@
 package com.manuel.workshop.dto;
 
+import io.swagger.annotations.ApiModel;
+
+@ApiModel(value = "Habitacion")
 public class HabitacionDTO {
     private Integer numero;
     private String tipoHabitacion;
