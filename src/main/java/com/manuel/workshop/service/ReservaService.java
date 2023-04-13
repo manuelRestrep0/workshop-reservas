@@ -54,8 +54,21 @@ public class ReservaService {
         if(auxCliente.isPresent()){
             Optional<Habitacion> auxHab = this.habitacionRepository.findById(numHabitacion);
             if(auxHab.isPresent()){
-
-                List<HabitacionDTO> disponibles = validarDisponibilidadFecha(auxFecha);
+                List<Habitacion> disponibles = this.habitacionRepository.findAll();
+                List<Habitacion> habReservas = new ArrayList<>();
+                List<Reserva> habitacionesReservadas = this.reservaRepository.findAll();
+                habitacionesReservadas.stream()
+                        .filter(reserva -> reserva.getFechaReserva().equals(auxFecha))
+                        .forEach(reserva -> habReservas.add(reserva.getHabitacion()));
+                disponibles = disponibles.stream()
+                        .filter(habitacion -> !habReservas.contains(habitacion))
+                        .collect(Collectors.toList());
+                /*List<HabitacionDTO> disponibles = validarDisponibilidadFecha(auxFecha);
+                HabitacionDTO auxHabitacionDTO = new HabitacionDTO(
+                        auxHab.get().getNumero(),
+                        auxHab.get().getTipoHabitacion(),
+                        auxHab.get().getPrecioBase()
+                );*/
                 if(disponibles.contains(auxHab.get())){
                     this.reservaRepository.save(new Reserva(auxFecha,auxHab.get(),auxCliente.get(),auxHab.get().getPrecioBase()));
                     return new ReservaDTO(auxFecha,auxHab.get(),auxCliente.get(),auxHab.get().getPrecioBase());
@@ -87,7 +100,6 @@ public class ReservaService {
     public List<HabitacionDTO> validarDisponibilidadFecha(LocalDate fecha){
         List<Habitacion> disponibles = this.habitacionRepository.findAll();
         List<Habitacion> habReservas = new ArrayList<>();
-
         List<Reserva> habitacionesReservadas = this.reservaRepository.findAll();
         habitacionesReservadas.stream()
                 .filter(reserva -> reserva.getFechaReserva().equals(fecha))
