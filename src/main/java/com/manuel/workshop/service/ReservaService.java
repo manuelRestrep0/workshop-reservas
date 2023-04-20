@@ -4,6 +4,7 @@ import com.manuel.workshop.controller.ReservaController;
 import com.manuel.workshop.dto.HabitacionDTO;
 import com.manuel.workshop.dto.ReservaDTO;
 import com.manuel.workshop.exception.ApiRequestException;
+import com.manuel.workshop.mapper.ReservaMapper;
 import com.manuel.workshop.model.Cliente;
 import com.manuel.workshop.model.Habitacion;
 import com.manuel.workshop.model.Reserva;
@@ -63,15 +64,10 @@ public class ReservaService {
                 disponibles = disponibles.stream()
                         .filter(habitacion -> !habReservas.contains(habitacion))
                         .collect(Collectors.toList());
-                /*List<HabitacionDTO> disponibles = validarDisponibilidadFecha(auxFecha);
-                HabitacionDTO auxHabitacionDTO = new HabitacionDTO(
-                        auxHab.get().getNumero(),
-                        auxHab.get().getTipoHabitacion(),
-                        auxHab.get().getPrecioBase()
-                );*/
                 if(disponibles.contains(auxHab.get())){
-                    this.reservaRepository.save(new Reserva(auxFecha,auxHab.get(),auxCliente.get(),auxHab.get().getPrecioBase()));
-                    return new ReservaDTO(auxFecha,auxHab.get(),auxCliente.get(),auxHab.get().getPrecioBase());
+                    Reserva reserva = new Reserva(auxFecha,auxHab.get(),auxCliente.get(),auxHab.get().getPrecioBase());
+                    this.reservaRepository.save(reserva);
+                    return ReservaMapper.INSTANCE.reservaToReservaDTO(reserva);
                 } else{
                     throw new ApiRequestException("Esta habitacion no esta disponible");
                 }
@@ -92,9 +88,9 @@ public class ReservaService {
                 .filter(reserva -> reserva.getCliente().getCedula().equals(cedula))
                 .collect(Collectors.toList());
         List<ReservaDTO> reservasDTO = new ArrayList<>();
-        reservasCliente.stream()
-                .forEach(reserva -> reservasDTO.add(new ReservaDTO(reserva.getFechaReserva(),reserva.getHabitacion(),reserva.getCliente()
-                ,reserva.getTotalPago())));
+        reservasDTO = reservasCliente.stream()
+                .map(reserva -> ReservaMapper.INSTANCE.reservaToReservaDTO(reserva))
+                .collect(Collectors.toList());
         return reservasDTO;
     }
     public List<HabitacionDTO> validarDisponibilidadFecha(LocalDate fecha){

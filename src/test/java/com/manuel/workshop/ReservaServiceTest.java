@@ -102,9 +102,5 @@ public class ReservaServiceTest {
 
         List<HabitacionDTO> habitaciones = this.reservaService.obtenerHabitacionesDisponiblesFecha(fecha);
     }
-    @Test
-    public void obtenerHabitacionesDisponiblesFiltradasPorTipoHabitacionExistente(){
-
-    }
 
 }

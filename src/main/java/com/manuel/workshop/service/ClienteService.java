@@ -2,6 +2,7 @@ package com.manuel.workshop.service;
 
 import com.manuel.workshop.dto.ClienteDTO;
 import com.manuel.workshop.exception.ApiRequestException;
+import com.manuel.workshop.mapper.ClienteMapper;
 import com.manuel.workshop.model.Cliente;
 import com.manuel.workshop.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +30,10 @@ public class ClienteService {
             throw new ApiRequestException("Se requiere una identificacion valida");
         }
         UUID contrasena = UUID.randomUUID();
-        Cliente cliente = new Cliente(
-                clienteDTO.getNombre(),
-                clienteDTO.getApellido(),
-                clienteDTO.getCedula(),
-                clienteDTO.getDireccion(),
-                clienteDTO.getEdad(),
-                clienteDTO.getCorreo(),
-                "si",
-                contrasena.toString()
-        );
+        Cliente cliente = ClienteMapper.INSTANCE.clienteDTOtoCliente(clienteDTO);
+        System.out.println(cliente.toString());
+        cliente.setCuentaHabilitada("si");
+        cliente.setContrasena(contrasena.toString());
         this.clienteRepository.save(cliente);
         return clienteDTO;
     }
